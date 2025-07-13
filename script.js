@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             button.style.transform = 'scale(0.98)';
             
             const downloadLinks = {
-                windows: './downloads/mr-terrific-win.exe'
+                windows: 'https://mrterrific.oss-cn-hongkong.aliyuncs.com/mr-terrific-win.exe'
             };
             
             setTimeout(() => {
