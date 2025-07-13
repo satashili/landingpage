@@ -116,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoPlaceholder = document.querySelector('.video-placeholder');
     if (videoPlaceholder) {
         videoPlaceholder.addEventListener('click', () => {
-            // 这里可以替换为你的 Google Drive 视频链接
-            const videoUrl = 'https://drive.google.com/file/d/YOUR_VIDEO_ID/view';
+            // 使用本地视频文件
+            const videoUrl = './videos/demo-video.mp4';
             
             // 创建模态窗口来播放视频
             const modal = document.createElement('div');
@@ -160,26 +160,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 z-index: 1001;
             `;
             
-            // 这里可以嵌入 Google Drive 视频的 iframe
-            const iframe = document.createElement('iframe');
-            iframe.src = videoUrl.replace('/view', '/preview');
-            iframe.style.cssText = `
+            // 使用 HTML5 video 标签替代 iframe
+            const video = document.createElement('video');
+            video.src = videoUrl;
+            video.controls = true;
+            video.autoplay = true;
+            video.style.cssText = `
                 width: 100%;
                 height: 100%;
-                border: none;
+                object-fit: contain;
             `;
             
             closeButton.addEventListener('click', () => {
+                video.pause(); // 关闭时暂停视频
                 document.body.removeChild(modal);
             });
             
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
+                    video.pause(); // 点击外部关闭时暂停视频
                     document.body.removeChild(modal);
                 }
             });
             
-            videoContainer.appendChild(iframe);
+            videoContainer.appendChild(video);
             modal.appendChild(closeButton);
             modal.appendChild(videoContainer);
             document.body.appendChild(modal);
@@ -194,20 +198,62 @@ document.addEventListener('DOMContentLoaded', () => {
             const btnText = button.querySelector('.btn-text strong');
             const originalText = btnText.textContent;
             
-            // Button animation
+            // 检查是否为 Mac 平台
+            if (platform === 'mac') {
+                // Mac 版本显示 Coming Soon 提示
+                btnText.textContent = 'Coming Soon';
+                button.style.transform = 'scale(0.98)';
+                
+                // 创建提示弹窗
+                const alert = document.createElement('div');
+                alert.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: rgba(240, 245, 255, 0.95);
+                    color: #1a1a2e;
+                    padding: 40px;
+                    border-radius: 15px;
+                    text-align: center;
+                    z-index: 1000;
+                    backdrop-filter: blur(15px);
+                    border: 2px solid rgba(100, 181, 246, 0.3);
+                    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+                    max-width: 400px;
+                `;
+                
+                alert.innerHTML = `
+                    <h3 style="margin: 0 0 15px 0; color: #1565c0; font-size: 24px; font-weight: 600;">Mac Version Coming Soon</h3>
+                    <p style="margin: 0 0 20px 0; color: #37474f; font-size: 16px; line-height: 1.5;">The Mac version is currently in development.</p>
+                    <p style="margin: 0; color: #1976d2; font-size: 14px; font-weight: 500;">Please try the Windows version first</p>
+                `;
+                
+                document.body.appendChild(alert);
+                
+                // 3秒后自动关闭提示
+                setTimeout(() => {
+                    document.body.removeChild(alert);
+                    btnText.textContent = originalText;
+                    button.style.transform = '';
+                }, 3000);
+                
+                return; // 不执行后续的下载逻辑
+            }
+            
+            // Windows 版本的正常下载逻辑
             btnText.textContent = 'Downloading...';
             button.style.transform = 'scale(0.98)';
             
             const downloadLinks = {
-                mac: 'https://example.com/downloads/mr-terrific-mac.dmg',
-                windows: 'https://example.com/downloads/mr-terrific-win.exe'
+                windows: './downloads/mr-terrific-win.exe'
             };
             
             setTimeout(() => {
                 // Simulate download
                 const link = document.createElement('a');
                 link.href = downloadLinks[platform];
-                link.download = platform === 'mac' ? 'mr-terrific-mac.dmg' : 'mr-terrific-win.exe';
+                link.download = 'mr-terrific-win.exe';
                 document.body.appendChild(link);
                 link.click();
                 document.body.removeChild(link);
