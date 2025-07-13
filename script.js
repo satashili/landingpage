@@ -116,8 +116,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const videoPlaceholder = document.querySelector('.video-placeholder');
     if (videoPlaceholder) {
         videoPlaceholder.addEventListener('click', () => {
-            // 使用本地视频文件
-            const videoUrl = './videos/demo-video.mp4';
+            // 使用Bilibili视频链接
+            const videoUrl = 'https://www.bilibili.com/video/BV1zbuPzHEZS/?spm_id_from=333.1387.homepage.video_card.click&vd_source=fe2dde1eac0a47ba0201d2a71bacd79e';
             
             // 创建模态窗口来播放视频
             const modal = document.createElement('div');
@@ -160,30 +160,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 z-index: 1001;
             `;
             
-            // 使用 HTML5 video 标签替代 iframe
-            const video = document.createElement('video');
-            video.src = videoUrl;
-            video.controls = true;
-            video.autoplay = true;
-            video.style.cssText = `
+            // 使用iframe嵌入Bilibili视频
+            const iframe = document.createElement('iframe');
+            iframe.src = videoUrl;
+            iframe.frameBorder = '0';
+            iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+            iframe.allowFullscreen = true;
+            iframe.style.cssText = `
                 width: 100%;
                 height: 100%;
-                object-fit: contain;
+                border: none;
             `;
             
             closeButton.addEventListener('click', () => {
-                video.pause(); // 关闭时暂停视频
                 document.body.removeChild(modal);
             });
             
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    video.pause(); // 点击外部关闭时暂停视频
                     document.body.removeChild(modal);
                 }
             });
             
-            videoContainer.appendChild(video);
+            videoContainer.appendChild(iframe);
             modal.appendChild(closeButton);
             modal.appendChild(videoContainer);
             document.body.appendChild(modal);
